@@ -758,16 +758,20 @@ video {
    ========================================================================== */
 
 @media (min-width: 1000px) {
-  /* Langkah-langkah: dibagi dua kolom supaya kartunya tidak terlalu tinggi
-     dan tidak menyisakan ruang kosong di sebelahnya. Nomor tetap berurutan
-     kiri-ke-kanan karena ini satu daftar yang sama. */
+  /* Langkah-langkah: dibagi dua kolom supaya kartunya tidak terlalu tinggi.
+     Memakai `column-count` (bukan `grid`) karena cara ini MEMBAGI RATA isinya:
+     browser menghitung sendiri berapa langkah yang muat di tiap kolom, sehingga
+     tidak ada langkah yang berdiri sendiri di bawah dengan sisi lain kosong.
+     `break-inside: avoid` menjaga satu langkah tidak terbelah dua kolom. */
   .langkah--dua {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 40px;
+    column-count: 2;
+    column-gap: 40px;
   }
 
   .langkah--dua li {
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
     margin-bottom: 18px;
   }
 
