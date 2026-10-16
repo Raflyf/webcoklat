@@ -792,3 +792,42 @@ video {
     margin-right: auto;
   }
 }
+
+/* ==========================================================================
+   HALAMAN BERISI PENDEK (mis. login admin)
+
+   MASALAHNYA: kotak isian yang ditarik selebar layar terlihat aneh — mata
+   harus bergerak jauh hanya untuk satu kolom, dan tombolnya jadi seperti bilah
+   panjang. Halaman pun terasa "melayang" karena sisa ruang menumpuk di bawah.
+
+   SOLUSINYA: batasi lebar kotaknya, dan letakkan di tengah tinggi layar
+   memakai `margin: auto` (bukan `justify-content: center`) — cara ini aman:
+   kalau isinya ternyata lebih tinggi dari layar, bagian atasnya tidak
+   terpotong.
+   ========================================================================== */
+
+.wadah--tengah {
+  display: flex;
+  flex-direction: column;
+}
+
+.wadah--tengah > #layar-pin {
+  margin-top: auto;
+  margin-bottom: auto;
+  width: 100%;
+}
+
+/* Lebar khusus formulir login — sengaja lebih sempit daripada formulir biasa,
+   karena isinya cuma satu kolom pendek. */
+.kolom-login {
+  max-width: 430px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 760px) {
+  .kolom-login {
+    max-width: 460px;
+  }
+}
