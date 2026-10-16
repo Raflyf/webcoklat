@@ -744,3 +744,51 @@ video {
     --lebar: 1160px;
   }
 }
+
+/* ==========================================================================
+   MENGATASI KOLOM YANG TIMPANG
+
+   MASALAHNYA: pada tata letak dua kolom, kalau isi kolom kiri jauh lebih
+   tinggi daripada kolom kanan, bagian bawahnya jadi tidak sejajar dan muncul
+   ruang kosong besar di salah satu sisi. Terlihat berantakan.
+
+   SOLUSINYA: bagian yang isinya sedikit JANGAN ditaruh sebagai kolom
+   pendamping. Sebagai gantinya, konten panjang dibagi rata ke beberapa kolom,
+   dan catatan pendek disusun berjajar penuh selebar halaman.
+   ========================================================================== */
+
+@media (min-width: 1000px) {
+  /* Langkah-langkah: dibagi dua kolom supaya kartunya tidak terlalu tinggi
+     dan tidak menyisakan ruang kosong di sebelahnya. Nomor tetap berurutan
+     kiri-ke-kanan karena ini satu daftar yang sama. */
+  .langkah--dua {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 40px;
+  }
+
+  .langkah--dua li {
+    margin-bottom: 18px;
+  }
+
+  /* Catatan pendek: berjajar penuh selebar halaman */
+  .catatan-baris {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .catatan-baris .catatan-aman {
+    margin-top: 0;
+  }
+
+  /* Isi yang bentuknya memanjang ke bawah (formulir, kode, pemutar) sebaiknya
+     TIDAK dilebarkan penuh — baris yang terlalu panjang justru sulit dibaca
+     dan kotak isian jadi terlihat aneh. Dipusatkan pada lebar yang nyaman. */
+  .kolom-sempit {
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

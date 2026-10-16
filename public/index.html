@@ -36,42 +36,38 @@
         </a>
       </div>
 
-      <!-- Di layar lebar, bagian ini tersusun DUA KOLOM:
-           kiri penjelasan langkah, kanan catatan pendukung.
-           Di ponsel tetap menumpuk satu kolom seperti biasa. -->
-      <div class="dua-kolom" style="margin-top: 22px">
-        <div class="kolom">
-          <div class="kartu">
-            <h2 class="kartu__judul">Bagaimana cara kerjanya?</h2>
-            <p class="kartu__keterangan">Lima langkah, tanpa aplikasi tambahan.</p>
-            <ol class="langkah">
-              <li><strong>Pembeli mengunggah video.</strong> Isi formulir, pilih videonya, kirim.</li>
-              <li><strong>Video tersimpan otomatis.</strong> Sistem membuat folder khusus untuk pesanan itu di penyimpanan perusahaan.</li>
-              <li><strong>Penerima memindai QR.</strong> Semua kemasan memakai QR yang sama — mengarah ke halaman ini.</li>
-              <li><strong>Penerima memasukkan kode.</strong> Kode ada di kartu di dalam kemasan, misalnya <strong>CH-7K9P-2M4Q</strong>.</li>
-              <li><strong>Video yang tepat terbuka.</strong> Hanya video milik kode itu — bukan video pembeli lain.</li>
-            </ol>
-          </div>
+      <!-- Kartu langkah dibuat selebar halaman, dan daftarnya dibagi dua kolom
+           di layar lebar. Dengan begitu tidak ada kolom pendamping yang
+           isinya lebih pendek sehingga bawahnya jadi tidak sejajar. -->
+      <div class="kartu" style="margin-top: 22px">
+        <h2 class="kartu__judul">Bagaimana cara kerjanya?</h2>
+        <p class="kartu__keterangan">Lima langkah, tanpa aplikasi tambahan.</p>
+        <ol class="langkah langkah--dua">
+          <li><strong>Pembeli mengunggah video.</strong> Isi formulir, pilih videonya, kirim.</li>
+          <li><strong>Video tersimpan otomatis.</strong> Sistem membuat folder khusus untuk pesanan itu di penyimpanan perusahaan.</li>
+          <li><strong>Penerima memindai QR.</strong> Semua kemasan memakai QR yang sama — mengarah ke halaman ini.</li>
+          <li><strong>Penerima memasukkan kode.</strong> Kode ada di kartu di dalam kemasan, misalnya <strong>CH-7K9P-2M4Q</strong>.</li>
+          <li><strong>Video yang tepat terbuka.</strong> Hanya video milik kode itu — bukan video pembeli lain.</li>
+        </ol>
+      </div>
+
+      <div class="catatan-baris">
+        <div class="catatan-aman">
+          <span class="catatan-aman__ikon">🔒</span>
+          <span>
+            Video tidak pernah ditampilkan ke publik dan tidak bisa ditelusuri
+            lewat penyimpanan. Tanpa kode, tidak ada yang bisa membuka video
+            siapa pun.
+          </span>
         </div>
 
-        <div class="kolom">
-          <div class="catatan-aman" style="margin-top: 0">
-            <span class="catatan-aman__ikon">🔒</span>
-            <span>
-              Video tidak pernah ditampilkan ke publik dan tidak bisa ditelusuri
-              lewat penyimpanan. Tanpa kode, tidak ada yang bisa membuka video
-              siapa pun.
-            </span>
-          </div>
-
-          <div class="catatan-aman" style="margin-top: 16px">
-            <span class="catatan-aman__ikon">🎁</span>
-            <span>
-              Satu QR code dipakai untuk <strong>semua</strong> kemasan. Yang
-              membedakan video tiap penerima adalah kode pesanan di kartu —
-              bukan QR-nya.
-            </span>
-          </div>
+        <div class="catatan-aman">
+          <span class="catatan-aman__ikon">🎁</span>
+          <span>
+            Satu QR code dipakai untuk <strong>semua</strong> kemasan. Yang
+            membedakan video tiap penerima adalah kode pesanan di kartu —
+            bukan QR-nya.
+          </span>
         </div>
       </div>
     </main>
