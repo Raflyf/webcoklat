@@ -15,18 +15,21 @@
         padding: 16px 14px;
         font-size: 26px;
         font-weight: 700;
-        font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+        font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
         letter-spacing: 0.3em;
         text-align: center;
         color: var(--coklat-tua);
-        background: var(--krem);
+        background: #fff;
         border: 2px solid var(--garis);
         border-radius: var(--radius-kecil);
+        box-shadow: 0 1px 3px rgba(53, 29, 17, 0.04);
+        transition: border-color 0.18s ease, box-shadow 0.18s ease;
       }
       .pin-kotak:focus {
         outline: none;
         border-color: var(--karamel);
         background: #fff;
+        box-shadow: 0 0 0 4px rgba(184, 115, 58, 0.2);
       }
 
       .qr-area {
@@ -34,8 +37,9 @@
         justify-content: center;
         padding: 24px;
         background: #fff;
-        border: 1px solid var(--garis);
+        border: 1.5px solid var(--garis);
         border-radius: var(--radius);
+        box-shadow: var(--bayang);
       }
       .qr-area img {
         display: block;
