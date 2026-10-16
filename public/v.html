@@ -63,12 +63,16 @@
           <h1 class="kepala__judul" id="judul-video">Untukmu</h1>
         </header>
 
-        <div class="kartu kartu-pemutar">
-          <video id="pemutar" controls playsinline preload="metadata"></video>
-          <div class="kartu-pemutar__kepala">
-            <p class="kartu-pemutar__dari" id="keterangan-penerima"></p>
+        <!-- Di layar lebar, pemutar dibatasi lebarnya dan dipusatkan —
+             video yang terlalu lebar justru sulit diikuti mata. -->
+        <div class="pemutar-bungkus">
+          <div class="kartu kartu-pemutar">
+            <video id="pemutar" controls playsinline preload="metadata"></video>
+            <div class="kartu-pemutar__kepala">
+              <p class="kartu-pemutar__dari" id="keterangan-penerima"></p>
+            </div>
+            <div class="kartu-pemutar__pesan tersembunyi" id="kotak-pesan"></div>
           </div>
-          <div class="kartu-pemutar__pesan tersembunyi" id="kotak-pesan"></div>
         </div>
 
         <div class="pesan pesan--gagal" id="pesan-video"></div>
@@ -83,6 +87,7 @@
 
     <footer class="kaki">
       <a href="/">Tentang halaman ini</a>
+      <a href="/privasi.html">Kebijakan privasi</a>
     </footer>
 
     <script src="/js/v.js"></script>

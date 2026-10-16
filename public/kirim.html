@@ -20,7 +20,10 @@
           </p>
         </header>
 
-        <form id="form" class="kartu" novalidate>
+        <!-- Di layar lebar: formulir di kiri, panduan di kanan. -->
+        <div class="dua-kolom">
+          <div class="kolom">
+            <form id="form" class="kartu" novalidate>
           <div class="bidang">
             <label for="nama-pembeli">Nama kamu</label>
             <input type="text" id="nama-pembeli" name="namaPembeli" maxlength="80" autocomplete="name" required />
@@ -75,13 +78,26 @@
             <button type="submit" class="tombol" id="tombol-kirim">Kirim video</button>
           </div>
         </form>
+          </div>
 
-        <div class="catatan-aman">
-          <span class="catatan-aman__ikon">🔒</span>
-          <span>
-            Videonya diunggah langsung ke penyimpanan perusahaan, tidak ditampilkan
-            ke publik, dan hanya bisa dibuka dengan kode yang kamu dapatkan.
-          </span>
+          <div class="kolom">
+            <div class="catatan-aman" style="margin-top: 0">
+              <span class="catatan-aman__ikon">🔒</span>
+              <span>
+                Videonya diunggah langsung ke penyimpanan perusahaan, tidak
+                ditampilkan ke publik, dan hanya bisa dibuka dengan kode yang kamu
+                dapatkan.
+              </span>
+            </div>
+
+            <div class="catatan-aman" style="margin-top: 16px">
+              <span class="catatan-aman__ikon">🎬</span>
+              <span>
+                Video berukuran besar tidak masalah — berkasnya dikirim langsung
+                ke penyimpanan, tidak lewat server kami.
+              </span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -122,6 +138,7 @@
 
     <footer class="kaki">
       <a href="/">Kembali ke halaman depan</a>
+      <a href="/admin.html" class="kaki__admin">Pengelola</a>
     </footer>
 
     <script src="/js/kirim.js"></script>

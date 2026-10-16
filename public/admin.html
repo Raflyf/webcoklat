@@ -155,6 +155,37 @@
           font-size: 12px;
         }
       }
+
+      /* ── Layar lebar: QR di kiri, panduan & pesanan di kanan ── */
+      @media (min-width: 1000px) {
+        .panel-grid {
+          display: grid;
+          grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+          gap: 26px;
+          align-items: start;
+        }
+
+        .panel-grid > .kolom {
+          min-width: 0;
+        }
+
+        .kolom > * + * {
+          margin-top: 16px;
+        }
+
+        .qr-area img {
+          width: 340px;
+          height: 340px;
+        }
+
+        .baris-kepala h1 {
+          font-size: 26px;
+        }
+
+        .kartu__judul {
+          font-size: 18px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -196,57 +227,65 @@
           <button type="button" class="tautan-keluar" id="tombol-keluar">Keluar</button>
         </div>
 
-        <div class="qr-area">
-          <img id="qr-gambar" alt="QR code untuk kemasan" />
-        </div>
-        <p class="alamat" id="alamat">memuat…</p>
+        <!-- Di layar lebar: QR di kiri, panduan & daftar pesanan di kanan.
+             Di ponsel tetap menumpuk satu kolom. -->
+        <div class="panel-grid">
+          <div class="kolom">
+            <div class="qr-area">
+              <img id="qr-gambar" alt="QR code untuk kemasan" />
+            </div>
+            <p class="alamat" id="alamat">memuat…</p>
 
-        <div class="aksi tanpa-cetak">
-          <button type="button" class="tombol" id="tombol-cetak">Cetak QR</button>
-          <button type="button" class="tombol tombol--garis" id="tombol-unduh">Unduh PNG</button>
-        </div>
+            <div class="aksi tanpa-cetak">
+              <button type="button" class="tombol" id="tombol-cetak">Cetak QR</button>
+              <button type="button" class="tombol tombol--garis" id="tombol-unduh">Unduh PNG</button>
+            </div>
+          </div>
 
-        <div class="kartu tanpa-cetak" style="margin-top: 18px">
-          <h2 class="kartu__judul">Penting sebelum mencetak</h2>
-          <ol class="langkah">
-            <li>
-              <strong>Satu QR untuk semua kemasan.</strong> Yang membedakan video tiap
-              penerima adalah kode pesanan di kartu, bukan QR-nya. Jadi cetak QR ini
-              sekali saja.
-            </li>
-            <li>
-              <strong>Pastikan alamat di atas sudah benar.</strong> Kalau masih
-              <em>localhost</em>, QR-nya tidak akan bisa dibuka dari ponsel siapa pun.
-              Perbaiki <code>SITUS_URL</code> lalu buka ulang halaman ini.
-            </li>
-            <li>
-              <strong>Cetak gelap di atas latar terang</strong>, ukuran minimal 2×2 cm
-              (disarankan 3×3 cm), dan jangan memotong ruang putih di sekelilingnya.
-            </li>
-            <li>
-              <strong>Uji pindai dengan 2-3 ponsel berbeda</strong> sebelum mencetak
-              dalam jumlah banyak.
-            </li>
-          </ol>
-        </div>
+          <div class="kolom">
+            <div class="kartu tanpa-cetak">
+              <h2 class="kartu__judul">Penting sebelum mencetak</h2>
+              <ol class="langkah">
+                <li>
+                  <strong>Satu QR untuk semua kemasan.</strong> Yang membedakan video tiap
+                  penerima adalah kode pesanan di kartu, bukan QR-nya. Jadi cetak QR ini
+                  sekali saja.
+                </li>
+                <li>
+                  <strong>Pastikan alamat di atas sudah benar.</strong> Kalau masih
+                  <em>localhost</em>, QR-nya tidak akan bisa dibuka dari ponsel siapa pun.
+                  Perbaiki <code>SITUS_URL</code> lalu buka ulang halaman ini.
+                </li>
+                <li>
+                  <strong>Cetak gelap di atas latar terang</strong>, ukuran minimal 2×2 cm
+                  (disarankan 3×3 cm), dan jangan memotong ruang putih di sekelilingnya.
+                </li>
+                <li>
+                  <strong>Uji pindai dengan 2-3 ponsel berbeda</strong> sebelum mencetak
+                  dalam jumlah banyak.
+                </li>
+              </ol>
+            </div>
 
-        <div class="kartu tanpa-cetak" style="margin-top: 16px">
-          <h2 class="kartu__judul">Pesanan terbaru</h2>
-          <p class="kartu__keterangan" id="keterangan-pesanan">
-            Memuat daftar pesanan…
-          </p>
-          <div class="tabel-bungkus">
-            <table class="daftar-pesanan tersembunyi" id="tabel-pesanan">
-              <thead>
-                <tr>
-                  <th>Kode</th>
-                  <th>Penerima</th>
-                  <th>Pembeli</th>
-                  <th>Waktu</th>
-                </tr>
-              </thead>
-              <tbody id="isi-pesanan"></tbody>
-            </table>
+            <div class="kartu tanpa-cetak">
+              <h2 class="kartu__judul">Pesanan terbaru</h2>
+              <p class="kartu__keterangan" id="keterangan-pesanan">
+                Memuat daftar pesanan…
+              </p>
+              <div class="tabel-bungkus">
+                <table class="daftar-pesanan tersembunyi" id="tabel-pesanan">
+                  <thead>
+                    <tr>
+                      <th>Kode</th>
+                      <th>Penerima</th>
+                      <th>Pembeli</th>
+                      <th>Waktu</th>
+                    </tr>
+                  </thead>
+                  <tbody id="isi-pesanan"></tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </section>
