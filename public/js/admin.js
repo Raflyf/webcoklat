@@ -78,15 +78,19 @@
         } catch (err) {
           // Mode privat ketat bisa menolak sessionStorage — lanjutkan tanpa simpan.
         }
-        elPin.value = '';
+
+        // Segera alihkan tampilan ke layar memuat agar tidak ada kekosongan pada form PIN
+        elLayarPin.classList.add('tersembunyi');
+        if (elLayarMemuat) elLayarMemuat.classList.remove('tersembunyi');
+
         muatData(d.token);
       })
       .catch(function (err) {
         tampilkanPesanPin(err && err.message ? err.message : 'Terjadi gangguan. Coba lagi.');
-      })
-      .then(function () {
         elTombolMasuk.disabled = false;
         elTombolMasuk.textContent = 'Masuk';
+        elPin.focus();
+        elPin.select();
       });
   });
 
@@ -111,6 +115,9 @@
           if (elLayarMemuat) elLayarMemuat.classList.add('tersembunyi');
           elPanel.classList.add('tersembunyi');
           elLayarPin.classList.remove('tersembunyi');
+          elTombolMasuk.disabled = false;
+          elTombolMasuk.textContent = 'Masuk';
+          elPin.value = '';
           tampilkanPesanPin((d && d.pesan) || 'Sesi berakhir. Masukkan PIN lagi.');
           return;
         }
@@ -121,6 +128,8 @@
         if (elLayarMemuat) elLayarMemuat.classList.add('tersembunyi');
         elPanel.classList.add('tersembunyi');
         elLayarPin.classList.remove('tersembunyi');
+        elTombolMasuk.disabled = false;
+        elTombolMasuk.textContent = 'Masuk';
         tampilkanPesanPin('Gagal memuat data sesi. Masukkan PIN lagi.');
       });
   }
@@ -130,6 +139,11 @@
     if (elLayarMemuat) elLayarMemuat.classList.add('tersembunyi');
     elLayarPin.classList.add('tersembunyi');
     elPanel.classList.remove('tersembunyi');
+
+    // Reset nilai PIN dan tombol setelah panel sukses tampil
+    elPin.value = '';
+    elTombolMasuk.disabled = false;
+    elTombolMasuk.textContent = 'Masuk';
 
     elQrGambar.src = d.qrPng || '';
     elAlamat.textContent = d.alamat || '';

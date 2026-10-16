@@ -152,8 +152,12 @@ Panduan detail pembuatan akun layanan Google tersedia di [docs/SETUP_GOOGLE.md](
   - Skrip `public/js/admin.js` menghapus kelas `ada-sesi` dan menyembunyikan `#layar-memuat` saat data panel berhasil dirender atau saat sesi kedaluwarsa/keluar.
 - **Pembersihan Hasil Cetak (Print Cleanliness):**
   - Mengisolasi `@media print` agar hanya menampilkan QR code besar terpusat. Tautan URL teks (`.alamat`) dan tombol aksi dinonaktifkan (`display: none !important;`) agar kemasan cetak bersih tanpa teks alamat tautan.
-- **Ekspor Foto QR Resolusi Tinggi (2400×2400 px PNG) untuk Produksi:**
-  - Mengubah fitur unduh QR dari format SVG menjadi format foto PNG definisi tinggi (*ultra-high resolution*) 2400×2400 px dengan level koreksi kesalahan H, siap cetak offset/sablon kemasan industri.
-  - Endpoint `api/admin.ts` kini menyuplai `qrPngHd` (2400 px) berdampingan dengan `qrPng` (800 px untuk pratinjau web), dengan fallback perenderan canvas 2400×2400 px di `public/js/admin.js`.
+### 17 Oktober 2026 — Penghalusan Transisi Masuk Admin (Eliminasi Form Kosong)
+- **Akar Masalah:**
+  - Saat form PIN di-submit, panggilan fetch `POST /api/admin` mengembalikan token, lalu skrip langsung mengosongkan nilai input (`elPin.value = ''`) dan mengaktifkan kembali tombol masuk (`Masuk`) sementara pemanggilan kedua `GET /api/admin?t=...` baru mulai berjalan.
+  - Akibatnya, selama 300–600 ms pengambilan data panel, layar PIN tetap terlihat dalam keadaan kotak input kosong melompong dan tombol kembali menjadi "Masuk", menciptakan kesan *glitch* atau formulir direset sebelum panel akhirnya muncul.
+- **Solusi:**
+  - Begitu PIN terverifikasi valid, `#layar-pin` seketika disembunyikan dan `#layar-memuat` langsung dimunculkan dengan animasi denyut yang halus (*breathing animation*).
+  - Form PIN baru dibersihkan di latar belakang setelah panel admin berhasil dirender sepenuhnya. Jika verifikasi gagal, layar PIN tetap bertahan dengan tombol kembali aktif dan input terfokus untuk koreksi cepat.
 
 
