@@ -834,4 +834,15 @@ video {
   .kolom-login {
     max-width: 460px;
   }
+
+  /* Yang harus terlihat di tengah layar adalah KARTU FORMULIR, bukan seluruh
+     blok (judul + kartu). Karena judul berada di atas kartu, memusatkan
+     seluruh blok membuat kartunya terdorong turun sekitar setengah tinggi
+     judul. Perbaikannya: tambahkan ruang kosong di bawah blok, sehingga saat
+     blok BESERTA ruang itu dipusatkan, isinya naik dan kartunya tepat di
+     tengah. Dipakai `padding` (bukan `transform`) supaya tata letak tetap
+     mengalir normal dan tidak ada bagian yang tertutup di layar pendek. */
+  .wadah--tengah > #layar-pin {
+    padding-bottom: 124px;
+  }
 }
