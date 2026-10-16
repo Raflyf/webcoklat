@@ -143,7 +143,7 @@ Lalu isi bagian Google:
 
 ```env
 GOOGLE_CLIENT_EMAIL=webcoklat-bot@webcoklat.iam.gserviceaccount.com
-GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvQIBADAN...\n-----END PRIVATE KEY-----\n"
+GOOGLE_PRIVATE_KEY=<salin seluruh isi "private_key" dari berkas JSON, apa adanya>
 GOOGLE_DRIVE_FOLDER_ID=1AbCdEfGhIjKlMnOpQrStUvWxYz
 GOOGLE_SHEET_ID=1XyZ123AbC456DeF789GhI
 GOOGLE_SHEET_TAB=Sheet1

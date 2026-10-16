@@ -16,7 +16,9 @@ import assert from 'node:assert/strict';
 process.env.TOKEN_SECRET = 'uji-rahasia-token-yang-panjangnya-lebih-dari-32-karakter';
 process.env.ADMIN_PIN = '482913';
 process.env.GOOGLE_CLIENT_EMAIL = 'uji@proyek.iam.gserviceaccount.com';
-process.env.GOOGLE_PRIVATE_KEY = '-----BEGIN PRIVATE KEY-----\nUJI\n-----END PRIVATE KEY-----';
+// Nilai palsu untuk pengujian — bukan kunci sungguhan, dan sengaja tidak
+// menyerupai format kunci asli agar tidak memicu pemindai rahasia.
+process.env.GOOGLE_PRIVATE_KEY = 'kunci-uji-palsu-tidak-dipakai-di-produksi';
 process.env.GOOGLE_DRIVE_FOLDER_ID = 'folder-uji';
 process.env.GOOGLE_SHEET_ID = 'sheet-uji';
 process.env.SITUS_URL = 'https://cokelatku.com';
