@@ -42,12 +42,29 @@ export default denganPenangananError('selesai', async (req: VercelRequest, res: 
   }
 
   // ── Pastikan videonya benar-benar ada di Drive ──
-  let file: Awaited<ReturnType<typeof cariFileDiFolder>>;
-  try {
-    file = await cariFileDiFolder(isi.folderId);
-  } catch (err) {
-    console.error('[selesai] gagal memeriksa Drive:', err);
-    throw new KesalahanRamah(jelaskanErrorGoogle(err), 502);
+  //
+  // KENAPA DICOBA BERULANG KALI (temuan nyata 16 Okt 2026):
+  //   Google TIDAK mengirim header CORS pada balasan unggahan. Akibatnya browser
+  //   selalu melaporkan "koneksi terputus" WALAU unggahannya berhasil. Halaman
+  //   kirim karena itu tetap memanggil endpoint ini meski browser mengira gagal —
+  //   dan di sinilah kebenarannya diperiksa.
+  //
+  //   Karena panggilan itu bisa tiba tepat saat Google masih menyelesaikan
+  //   penulisan berkasnya, pencarian diulang beberapa kali sebelum menyerah.
+  let file: Awaited<ReturnType<typeof cariFileDiFolder>> = null;
+  const JUMLAH_COBA = 4;
+  for (let percobaan = 1; percobaan <= JUMLAH_COBA; percobaan++) {
+    try {
+      file = await cariFileDiFolder(isi.folderId);
+    } catch (err) {
+      console.error(`[selesai] gagal memeriksa Drive (percobaan ${percobaan}):`, err);
+      if (percobaan === JUMLAH_COBA) throw new KesalahanRamah(jelaskanErrorGoogle(err), 502);
+    }
+    if (file) break;
+    if (percobaan < JUMLAH_COBA) {
+      console.warn(`[selesai] video belum terlihat (percobaan ${percobaan}/${JUMLAH_COBA}) — menunggu sebentar.`);
+      await new Promise((r) => setTimeout(r, 1500));
+    }
   }
 
   if (!file) {

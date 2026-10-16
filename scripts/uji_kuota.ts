@@ -10,7 +10,7 @@
  *   Uji ini memisahkan kedua hal itu supaya penyebabnya jelas.
  */
 import { klienDrive } from '../src/google.js';
-import { config } from '../src/env.js';
+import { config, caraAksesGoogle } from '../src/env.js';
 
 async function main(): Promise<void> {
   const drive = klienDrive();
@@ -66,11 +66,18 @@ async function main(): Promise<void> {
 
   console.log('');
   if (bolehSimpan) {
-    console.log('✅ KESIMPULAN: service account BOLEH menyimpan. Setup aman.');
+    console.log('✅ KESIMPULAN: penyimpanan berkas BEKERJA.');
+    console.log(`   Cara akses: ${caraAksesGoogle() === 'oauth' ? 'OAuth akun pemilik' : 'service account'}`);
   } else {
-    console.log('❌ KESIMPULAN: service account TIDAK BOLEH menyimpan berkas.');
-    console.log('   Penyebab: akun service account tidak punya kuota penyimpanan.');
-    console.log('   Perbaikan: pakai OAuth akun Google pemilik (lihat docs/SETUP_OAUTH.md).');
+    console.log('❌ KESIMPULAN: TIDAK BISA menyimpan berkas.');
+    if (caraAksesGoogle() === 'service-account') {
+      console.log('   Penyebab: service account tidak punya kuota penyimpanan.');
+      console.log('   Perbaikan: pakai OAuth akun pemilik — lihat docs/SETUP_OAUTH.md');
+    } else {
+      console.log('   Sudah memakai OAuth, jadi kemungkinan lain:');
+      console.log('   - kuota Google Drive akun Anda penuh');
+      console.log('   - izin OAuth belum lengkap');
+    }
     process.exitCode = 1;
   }
 }

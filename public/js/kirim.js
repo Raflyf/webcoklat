@@ -187,32 +187,31 @@
   });
 
   /**
-   * Langkah 2 & 3: unggah ke Google, lalu kabari server.
+   * Langkah 2 & 3: unggah ke Google, lalu minta server memeriksa & mencatat.
    *
-   * Memakai XMLHttpRequest (bukan fetch) karena hanya XHR yang memberi
-   * kejadian kemajuan unggahan — penting untuk video besar supaya pengguna
-   * tahu prosesnya masih berjalan.
+   * ── TEMUAN PENTING (16 Okt 2026) ──
+   * Google TIDAK mengirim header CORS pada balasan unggahan. Akibatnya browser
+   * SELALU melaporkan "koneksi terputus" — padahal videonya sudah masuk Drive
+   * dengan utuh. Kalau kita percaya laporan browser, pembeli melihat kegagalan
+   * padahal berhasil, lalu mengirim ulang dan videonya jadi dobel.
+   *
+   * Karena itu: APA PUN yang dilaporkan browser, kita tetap minta server
+   * memeriksa langsung ke Google. Server yang menentukan berhasil atau tidak.
+   *
+   * Memakai XMLHttpRequest (bukan fetch) karena hanya XHR yang memberi kejadian
+   * kemajuan unggahan — penting untuk video besar supaya pembeli tahu prosesnya
+   * masih berjalan.
    */
   function unggahKeGoogle(uploadUri, berkas, sesi) {
     return new Promise(function (resolve, reject) {
-      var xhr = new XMLHttpRequest();
-      xhr.open('PUT', uploadUri, true);
-      xhr.setRequestHeader('Content-Type', berkas.type || 'application/octet-stream');
+      var sudahDicatat = false;
 
-      xhr.upload.onprogress = function (ev) {
-        if (!ev.lengthComputable) return;
-        // Unggahan memakai 5-95% dari bilah, sisanya untuk pemeriksaan server.
-        var persen = 5 + (ev.loaded / ev.total) * 90;
-        aturKemajuan(persen, 'Mengunggah video… ' + ukuranTerbaca(ev.loaded) + ' / ' + ukuranTerbaca(ev.total));
-      };
-
-      xhr.onload = function () {
-        if (xhr.status < 200 || xhr.status >= 300) {
-          reject(new Error('Unggahan gagal (kode ' + xhr.status + '). Periksa koneksi lalu coba lagi.'));
-          return;
-        }
+      /** Minta server memeriksa & mencatat. Hanya dijalankan sekali. */
+      function mintaServerCatat() {
+        if (sudahDicatat) return;
+        sudahDicatat = true;
         aturKemajuan(96, 'Memeriksa & mencatat…');
-        // ── Langkah 3: kabari server ──
+
         fetch('/api/selesai', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -228,13 +227,33 @@
           .catch(function (err) {
             reject(err);
           });
+      }
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('PUT', uploadUri, true);
+      xhr.setRequestHeader('Content-Type', berkas.type || 'application/octet-stream');
+
+      xhr.upload.onprogress = function (ev) {
+        if (!ev.lengthComputable) return;
+        // Unggahan memakai 5-95% dari bilah, sisanya untuk pemeriksaan server.
+        var persen = 5 + (ev.loaded / ev.total) * 90;
+        aturKemajuan(persen, 'Mengunggah video… ' + ukuranTerbaca(ev.loaded) + ' / ' + ukuranTerbaca(ev.total));
       };
 
-      xhr.onerror = function () {
-        reject(new Error('Koneksi terputus saat mengunggah. Coba lagi ya.'));
+      // Browser mengira unggahan selesai -> tetap verifikasi lewat server.
+      xhr.onload = function () {
+        mintaServerCatat();
       };
+
+      // Browser mengira koneksi putus. Dalam praktiknya ini SERING berarti
+      // unggahannya justru BERHASIL (balasan Google tidak terbaca karena CORS),
+      // jadi jangan langsung menyerah — biarkan server yang memeriksa.
+      xhr.onerror = function () {
+        mintaServerCatat();
+      };
+
       xhr.ontimeout = function () {
-        reject(new Error('Unggahan memakan waktu terlalu lama. Coba lagi ya.'));
+        mintaServerCatat();
       };
 
       xhr.send(berkas);
