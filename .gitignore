@@ -51,3 +51,11 @@ tmp/
 # Jangan di-commit: isinya alamat situs yang bisa berubah (localhost vs domain asli).
 qr-kemasan.png
 qr-kemasan.svg
+
+# ── Berkas bantuan setup ──
+# PIN admin & catatan setup bersifat rahasia.
+PIN-ADMIN.txt
+CATATAN-SETUP.txt
+
+.vercel
+.env*

@@ -37,6 +37,20 @@ export const config = {
   sheetId: teks('GOOGLE_SHEET_ID'),
   sheetTab: teks('GOOGLE_SHEET_TAB', 'Sheet1'),
 
+  // ── Google OAuth (akun pemilik) ──
+  // KENAPA DIPERLUKAN, PADAHAL SUDAH ADA SERVICE ACCOUNT:
+  //   Service account TIDAK PUNYA KUOTA penyimpanan. Ia bisa MEMBUAT FOLDER di
+  //   Drive Anda, tetapi berkas yang ia unggah dihitung terhadap kuotanya
+  //   sendiri — yaitu 0. Hasilnya unggahan video gagal dengan HTTP 403
+  //   "Service Accounts do not have storage quota".
+  //
+  //   Jadi untuk MENYIMPAN berkas, sistem harus memakai izin akun Google
+  //   PEMILIK (OAuth). Service account tetap dipakai bila OAuth belum diisi,
+  //   supaya setup bisa diuji bertahap.
+  googleOauthClientId: teks('GOOGLE_OAUTH_CLIENT_ID'),
+  googleOauthClientSecret: teks('GOOGLE_OAUTH_CLIENT_SECRET'),
+  googleOauthRefreshToken: teks('GOOGLE_OAUTH_REFRESH_TOKEN'),
+
   // ── Keamanan ──
   tokenSecret: teks('TOKEN_SECRET'),
   tokenMasaBerlakuJam: angka('TOKEN_MASA_BERLAKU_JAM', 2),
@@ -63,13 +77,40 @@ export const config = {
 /**
  * Periksa konfigurasi wajib. Dipanggil di awal setiap endpoint.
  * Mengembalikan daftar nama yang belum diisi (kosong = semua siap).
+ *
+ * CATATAN SOAL GOOGLE:
+ *   Cukup SALAH SATU cara akses yang lengkap — service account ATAU OAuth.
+ *   Tetapi untuk MENYIMPAN berkas, OAuth-lah yang bekerja (service account
+ *   tidak punya kuota penyimpanan). Karena itu OAuth diperiksa lebih dulu.
  */
 export function konfigurasiKurang(): string[] {
   const kurang: string[] = [];
-  if (!config.googleClientEmail) kurang.push('GOOGLE_CLIENT_EMAIL');
-  if (!config.googlePrivateKey) kurang.push('GOOGLE_PRIVATE_KEY');
+
+  const oauthLengkap =
+    config.googleOauthClientId && config.googleOauthClientSecret && config.googleOauthRefreshToken;
+  const saLengkap = config.googleClientEmail && config.googlePrivateKey;
+
+  if (!oauthLengkap && !saLengkap) {
+    kurang.push(
+      'GOOGLE_OAUTH_CLIENT_ID + GOOGLE_OAUTH_CLIENT_SECRET + GOOGLE_OAUTH_REFRESH_TOKEN (atau kredensial service account)',
+    );
+  }
+
   if (!config.driveFolderId) kurang.push('GOOGLE_DRIVE_FOLDER_ID');
   if (!config.sheetId) kurang.push('GOOGLE_SHEET_ID');
   if (!config.tokenSecret || config.tokenSecret.length < 32) kurang.push('TOKEN_SECRET (minimal 32 karakter)');
   return kurang;
+}
+
+/**
+ * Apakah sistem memakai OAuth (akun pemilik) atau service account?
+ * Dipakai untuk memberi peringatan jelas: dengan service account, unggahan
+ * PASTI gagal karena kuota penyimpanannya nol.
+ */
+export function caraAksesGoogle(): 'oauth' | 'service-account' | 'tidak-ada' {
+  if (config.googleOauthClientId && config.googleOauthClientSecret && config.googleOauthRefreshToken) {
+    return 'oauth';
+  }
+  if (config.googleClientEmail && config.googlePrivateKey) return 'service-account';
+  return 'tidak-ada';
 }

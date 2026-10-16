@@ -23,22 +23,43 @@ const SCOPE = [
   'https://www.googleapis.com/auth/spreadsheets',
 ] as const;
 
-let authTersimpan: Auth.JWT | null = null;
+let authTersimpan: Auth.JWT | Auth.OAuth2Client | null = null;
 
 /**
  * Ambil klien autentikasi (dibuat sekali per proses).
  *
- * Disimpan agar token akses hasil penukaran JWT bisa dipakai ulang. Tanpa ini,
- * setiap permintaan harus menukar JWT ke Google lagi — menambah ~200-400 ms.
+ * DUA CARA, DIPILIH OTOMATIS:
+ *
+ *   1. OAuth akun pemilik (DIPAKAI BILA TERSEDIA) — berkas yang diunggah
+ *      menjadi milik akun Google pemilik, sehingga masuk kuota penyimpanan
+ *      mereka.
+ *
+ *   2. Service account (cadangan) — bisa MEMBUAT FOLDER dan MEMBACA, tetapi
+ *      TIDAK BISA MENYIMPAN berkas: service account tidak punya kuota
+ *      penyimpanan, jadi unggahan gagal dengan HTTP 403.
+ *
+ *   Karena itu, untuk sistem yang benar-benar menyimpan video, OAuth wajib
+ *   diisi. Service account tetap didukung agar setup bisa diuji bertahap.
+ *
+ * Disimpan di variabel modul agar token akses hasil penukaran bisa dipakai
+ * ulang. Tanpa ini, setiap permintaan harus menukar ulang ke Google —
+ * menambah ~200-400 ms.
  */
-export function authGoogle(): Auth.JWT {
-  if (!authTersimpan) {
-    authTersimpan = new google.auth.JWT({
-      email: config.googleClientEmail,
-      key: config.googlePrivateKey,
-      scopes: [...SCOPE],
-    });
+export function authGoogle(): Auth.JWT | Auth.OAuth2Client {
+  if (authTersimpan) return authTersimpan;
+
+  if (config.googleOauthClientId && config.googleOauthClientSecret && config.googleOauthRefreshToken) {
+    const oauth2 = new google.auth.OAuth2(config.googleOauthClientId, config.googleOauthClientSecret);
+    oauth2.setCredentials({ refresh_token: config.googleOauthRefreshToken });
+    authTersimpan = oauth2;
+    return oauth2;
   }
+
+  authTersimpan = new google.auth.JWT({
+    email: config.googleClientEmail,
+    key: config.googlePrivateKey,
+    scopes: [...SCOPE],
+  });
   return authTersimpan;
 }
 
