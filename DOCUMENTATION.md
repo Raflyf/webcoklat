@@ -135,3 +135,13 @@ Panduan detail pembuatan akun layanan Google tersedia di [docs/SETUP_GOOGLE.md](
   - Mengadopsi font display modern **Outfit** untuk judul dan kartu, dipadukan dengan **Plus Jakarta Sans** untuk kenyamanan membaca teks tubuh, dan **JetBrains Mono** untuk kotak kode.
   - Memperkaya latar belakang dengan gradien radial hangat menyerupai nuansa kemasan cokelat artisanal.
   - Memperbarui interaktivitas kartu pilihan (`.pilihan__item`) dengan transisi elevasi lembut (`translateY(-3px)`), penataan nomor langkah berbingkai melingkar, dan *focus ring* aksesibel.
+
+### 16 Oktober 2026 — Perbaikan Pemindaian QR Kemasan (Error 404)
+- **Akar Masalah:**
+  1. Alamat tujuan yang tertanam pada QR code kemasan adalah path tanpa ekstensi: `<situsUrl>/v`. Secara bawaan, Vercel hanya menyajikan berkas statis `public/v.html` bila diminta langsung sebagai `/v.html` atau bila konfigurasi *clean URLs & rewrites* aktif. Tanpa aturan *rewrite*, permintaan ke `/v` menghasilkan respon `404 Not Found`.
+  2. Apabila `SITUS_URL` di Vercel tidak disetel atau masih bernilai `localhost`, QR code menanamkan host lokal yang tidak dapat diakses dari jaringan ponsel luar.
+- **Solusi:**
+  - Menambahkan `"cleanUrls": true` dan aturan `rewrites` eksplisit di `vercel.json` (`/v` $\to$ `/v.html`, `/kirim` $\to$ `/kirim.html`, `/admin` $\to$ `/admin.html`).
+  - Menyediakan berkas penjamin `public/v/index.html` untuk membelokkan akses `/v` ke `/v.html` di lingkungan statis manapun.
+  - Memperbarui `src/env.ts` dan `api/admin.ts` agar membaca domain otomatis Vercel (`VERCEL_PROJECT_PRODUCTION_URL`, `x-forwarded-host`) jika `SITUS_URL` belum diatur atau masih bernilai `localhost`.
+

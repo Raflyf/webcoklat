@@ -69,7 +69,14 @@ export default denganPenangananError('admin', async (req: VercelRequest, res: Ve
     }
 
     // Alamat yang ditanam di QR: halaman penerima, bukan halaman depan.
-    const alamat = `${config.situsUrl.replace(/\/+$/, '')}/v`;
+    let basisUrl = config.situsUrl;
+    const hostHeader = String(req.headers['x-forwarded-host'] || req.headers.host || '').trim();
+    const protoHeader = String(req.headers['x-forwarded-proto'] || 'https').trim();
+    if ((!basisUrl || /localhost|127\.0\.0\.1/i.test(basisUrl)) && hostHeader && !/localhost|127\.0\.0\.1/i.test(hostHeader)) {
+      basisUrl = `${protoHeader}://${hostHeader}`.replace(/\/+$/, '');
+    }
+
+    const alamat = `${basisUrl.replace(/\/+$/, '')}/v`;
 
     const [qrPng, qrSvg] = await Promise.all([
       QRCode.toDataURL(alamat, { ...OPSI_QR, width: 900 }),

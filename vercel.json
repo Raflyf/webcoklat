@@ -1,5 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/v", "destination": "/v.html" },
+    { "source": "/kirim", "destination": "/kirim.html" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/privasi", "destination": "/privasi.html" }
+  ],
   "functions": {
     "api/*.ts": {
       "maxDuration": 60

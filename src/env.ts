@@ -26,8 +26,25 @@ function rapikanPrivateKey(raw: string): string {
   return k.replace(/\\n/g, '\n').trim();
 }
 
+/** Mencari URL situs publik: periksa SITUS_URL, lalu fallback otomatis ke variabel Vercel. */
+function cariSitusUrl(): string {
+  const manual = teks('SITUS_URL');
+  if (manual && !/localhost|127\.0\.0\.1/i.test(manual)) {
+    return manual.replace(/\/+$/, '');
+  }
+  const vercelProd = teks('VERCEL_PROJECT_PRODUCTION_URL');
+  if (vercelProd) {
+    return `https://${vercelProd.replace(/\/+$/, '')}`;
+  }
+  const vercelUrl = teks('VERCEL_URL');
+  if (vercelUrl) {
+    return `https://${vercelUrl.replace(/\/+$/, '')}`;
+  }
+  return (manual || 'http://localhost:3000').replace(/\/+$/, '');
+}
+
 export const config = {
-  situsUrl: teks('SITUS_URL', 'http://localhost:3000').replace(/\/+$/, ''),
+  situsUrl: cariSitusUrl(),
   namaPerusahaan: teks('NAMA_PERUSAHAAN', 'Cokelat Kita'),
 
   // ── Google ──
