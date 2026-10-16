@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Kirim Video</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <main class="wadah">
+      <!-- ── Bagian formulir ── -->
+      <section id="bagian-form">
+        <header class="kepala">
+          <div class="kepala__ikon">🎥</div>
+          <h1 class="kepala__judul">Kirim video untuk penerima</h1>
+          <p class="kepala__keterangan">
+            Videonya akan disimpan dengan aman, dan penerima membukanya dengan kode
+            yang kamu dapatkan di akhir.
+          </p>
+        </header>
+
+        <form id="form" class="kartu" novalidate>
+          <div class="bidang">
+            <label for="nama-pembeli">Nama kamu</label>
+            <input type="text" id="nama-pembeli" name="namaPembeli" maxlength="80" autocomplete="name" required />
+            <p class="bantuan">Supaya penerima tahu siapa yang mengirim.</p>
+          </div>
+
+          <div class="bidang">
+            <label for="nama-penerima">Nama penerima</label>
+            <input type="text" id="nama-penerima" name="namaPenerima" maxlength="80" required />
+            <p class="bantuan">Nama ini juga dipakai sebagai nama folder penyimpanan.</p>
+          </div>
+
+          <div class="bidang">
+            <label for="judul">Judul video <span class="opsional">(boleh dikosongkan)</span></label>
+            <input type="text" id="judul" name="judul" maxlength="120" placeholder="Contoh: Selamat ulang tahun!" />
+          </div>
+
+          <div class="bidang">
+            <label for="pesan">Pesan singkat <span class="opsional">(boleh dikosongkan)</span></label>
+            <textarea id="pesan" name="pesan" maxlength="800" placeholder="Tulis pesan yang muncul di bawah videonya nanti."></textarea>
+          </div>
+
+          <div class="bidang">
+            <label>Video</label>
+            <label class="pilih-berkas" id="pilih-berkas" for="berkas">
+              <input type="file" id="berkas" accept="video/mp4,video/quicktime,video/webm,video/x-matroska,video/3gpp" />
+              <span class="pilih-berkas__ikon">📹</span>
+              <span class="pilih-berkas__teks">Ketuk untuk memilih video</span>
+              <div class="pilih-berkas__kecil" id="batas-ukuran">atau seret berkasnya ke sini</div>
+            </label>
+
+            <div class="berkas-terpilih" id="berkas-terpilih">
+              <span>✅</span>
+              <span class="berkas-terpilih__nama" id="berkas-nama"></span>
+              <span class="berkas-terpilih__ukuran" id="berkas-ukuran"></span>
+            </div>
+          </div>
+
+          <div class="kemajuan" id="kemajuan">
+            <div class="kemajuan__batang">
+              <div class="kemajuan__isi" id="kemajuan-isi"></div>
+            </div>
+            <div class="kemajuan__teks">
+              <span id="kemajuan-status">Menyiapkan…</span>
+              <span id="kemajuan-persen">0%</span>
+            </div>
+          </div>
+
+          <div class="pesan pesan--gagal" id="pesan-gagal"></div>
+
+          <div class="bidang" style="margin-top: 22px">
+            <button type="submit" class="tombol" id="tombol-kirim">Kirim video</button>
+          </div>
+        </form>
+
+        <div class="catatan-aman">
+          <span class="catatan-aman__ikon">🔒</span>
+          <span>
+            Videonya diunggah langsung ke penyimpanan perusahaan, tidak ditampilkan
+            ke publik, dan hanya bisa dibuka dengan kode yang kamu dapatkan.
+          </span>
+        </div>
+      </section>
+
+      <!-- ── Bagian hasil (muncul setelah berhasil) ── -->
+      <section id="bagian-hasil" class="tersembunyi">
+        <header class="kepala">
+          <div class="kepala__ikon">🎉</div>
+          <h1 class="kepala__judul">Videonya sudah terkirim</h1>
+          <p class="kepala__keterangan">Simpan kode ini, ya.</p>
+        </header>
+
+        <div class="kode-hasil">
+          <p class="kode-hasil__label">Kode untuk penerima</p>
+          <p class="kode-hasil__nilai" id="kode-nilai">—</p>
+          <p class="kode-hasil__catatan">
+            Tulis kode ini di kartu yang disertakan di dalam kemasan cokelat.
+            Penerima memindai QR di kemasan, lalu memasukkan kode ini.
+          </p>
+        </div>
+
+        <div class="kartu">
+          <h2 class="kartu__judul">Yang perlu dilakukan sekarang</h2>
+          <ol class="langkah">
+            <li><strong>Salin kodenya.</strong> Ketuk tombol di bawah untuk menyalin.</li>
+            <li><strong>Tulis di kartu.</strong> Tulis dengan huruf kapital agar mudah dibaca.</li>
+            <li><strong>Masukkan ke kemasan.</strong> Bersama cokelatnya.</li>
+          </ol>
+        </div>
+
+        <div class="bidang" style="margin-top: 18px">
+          <button type="button" class="tombol" id="tombol-salin">Salin kode</button>
+        </div>
+        <div class="bidang">
+          <button type="button" class="tombol tombol--garis" id="tombol-lagi">Kirim video lagi</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="kaki">
+      <a href="/">Kembali ke halaman depan</a>
+    </footer>
+
+    <script src="/js/kirim.js"></script>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Kirim Video Cokelat</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <main class="wadah">
+      <header class="kepala">
+        <div class="kepala__ikon">🍫</div>
+        <p class="kepala__nama" id="nama-perusahaan">Cokelat Kita</p>
+        <h1 class="kepala__judul">Kirim video,<br />sampai ke orangnya</h1>
+        <p class="kepala__keterangan">
+          Rekam pesanmu, kirim videonya, lalu tuliskan kodenya di kartu di dalam kemasan.
+        </p>
+      </header>
+
+      <div class="pilihan">
+        <a class="pilihan__item" href="/kirim.html">
+          <div class="pilihan__ikon">🎥</div>
+          <p class="pilihan__judul">Saya mau kirim video</p>
+          <p class="pilihan__keterangan">
+            Isi formulir, unggah video, lalu dapatkan kode untuk ditulis di kartu.
+          </p>
+        </a>
+
+        <a class="pilihan__item" href="/v.html">
+          <div class="pilihan__ikon">💌</div>
+          <p class="pilihan__judul">Saya menerima cokelat</p>
+          <p class="pilihan__keterangan">
+            Masukkan kode dari kartu di dalam kemasan untuk membuka videonya.
+          </p>
+        </a>
+      </div>
+
+      <div class="kartu" style="margin-top: 22px">
+        <h2 class="kartu__judul">Bagaimana cara kerjanya?</h2>
+        <p class="kartu__keterangan">Lima langkah, tanpa aplikasi tambahan.</p>
+        <ol class="langkah">
+          <li><strong>Pembeli mengunggah video.</strong> Isi formulir, pilih videonya, kirim.</li>
+          <li><strong>Video tersimpan otomatis.</strong> Sistem membuat folder khusus untuk pesanan itu di penyimpanan perusahaan.</li>
+          <li><strong>Penerima memindai QR.</strong> Semua kemasan memakai QR yang sama — mengarah ke halaman ini.</li>
+          <li><strong>Penerima memasukkan kode.</strong> Kode ada di kartu di dalam kemasan, misalnya <strong>CH-7K9P-2M4Q</strong>.</li>
+          <li><strong>Video yang tepat terbuka.</strong> Hanya video milik kode itu — bukan video pembeli lain.</li>
+        </ol>
+      </div>
+
+      <div class="catatan-aman">
+        <span class="catatan-aman__ikon">🔒</span>
+        <span>
+          Video tidak pernah ditampilkan ke publik dan tidak bisa ditelusuri lewat
+          penyimpanan. Tanpa kode, tidak ada yang bisa membuka video siapa pun.
+        </span>
+      </div>
+    </main>
+
+    <footer class="kaki">
+      <span id="nama-kaki">Cokelat Kita</span>
+    </footer>
+
+    <script>
+      // Ambil nama perusahaan dari server supaya cukup diubah di satu tempat.
+      fetch('/api/info')
+        .then((r) => r.json())
+        .then((d) => {
+          if (!d || !d.ok || !d.namaPerusahaan) return;
+          const nama = d.namaPerusahaan;
+          document.title = `Kirim Video — ${nama}`;
+          document.getElementById('nama-perusahaan').textContent = nama;
+          document.getElementById('nama-kaki').textContent = nama;
+        })
+        .catch(() => {
+          /* biarkan nama bawaan bila gagal */
+        });
+    </script>
+  </body>
+</html>

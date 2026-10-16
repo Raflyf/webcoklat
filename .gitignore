@@ -1,0 +1,53 @@
+# ── Kredensial: JANGAN PERNAH di-commit ──
+# Service account Google berisi private key. Kalau bocor, siapa pun bisa
+# membaca/menulis seluruh Drive pemiliknya.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.der
+id_rsa
+id_ed25519
+service-account*.json
+credentials*.json
+*-credentials.json
+google-credentials.json
+.npmrc
+.netrc
+
+# ── Node ──
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Build & cache ──
+.vercel
+.next
+dist/
+build/
+*.tsbuildinfo
+.turbo
+
+# ── Editor & OS ──
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Sementara ──
+scratch/
+tmp/
+*.log
+
+# ── Hasil QR (dibuat ulang dengan `npm run qr`) ──
+# Jangan di-commit: isinya alamat situs yang bisa berubah (localhost vs domain asli).
+qr-kemasan.png
+qr-kemasan.svg

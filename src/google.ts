@@ -1,0 +1,89 @@
+/**
+ * AUTENTIKASI GOOGLE
+ *
+ * Memakai SERVICE ACCOUNT: sejenis "akun robot" yang dibuat di Google Cloud.
+ * Kenapa bukan login akun Google biasa (OAuth)?
+ *   - Service account tidak perlu login ulang dan tidak bisa kedaluwarsa
+ *     karena orang mengganti kata sandi.
+ *   - Untuk mengganti ke akun Google perusahaan nanti, cukup: buat service
+ *     account baru di project perusahaan, lalu bagikan folder Drive mereka
+ *     ke email service account itu. Tidak ada kode yang perlu diubah.
+ *
+ * HAK AKSES YANG DIMINTA (sengaja dibatasi):
+ *   - drive      : membuat folder, mengunggah, membaca file video
+ *   - spreadsheets: mencatat & mencari kode pesanan
+ * Tidak ada akses ke Gmail, kontak, kalender, atau lainnya.
+ */
+import { google } from 'googleapis';
+import type { Auth } from 'googleapis';
+import { config } from './env.js';
+
+const SCOPE = [
+  'https://www.googleapis.com/auth/drive',
+  'https://www.googleapis.com/auth/spreadsheets',
+] as const;
+
+let authTersimpan: Auth.JWT | null = null;
+
+/**
+ * Ambil klien autentikasi (dibuat sekali per proses).
+ *
+ * Disimpan agar token akses hasil penukaran JWT bisa dipakai ulang. Tanpa ini,
+ * setiap permintaan harus menukar JWT ke Google lagi — menambah ~200-400 ms.
+ */
+export function authGoogle(): Auth.JWT {
+  if (!authTersimpan) {
+    authTersimpan = new google.auth.JWT({
+      email: config.googleClientEmail,
+      key: config.googlePrivateKey,
+      scopes: [...SCOPE],
+    });
+  }
+  return authTersimpan;
+}
+
+export function klienDrive() {
+  return google.drive({ version: 'v3', auth: authGoogle() });
+}
+
+export function klienSheets() {
+  return google.sheets({ version: 'v4', auth: authGoogle() });
+}
+
+/** Ambil token akses mentah — dipakai untuk memanggil REST Drive langsung. */
+export async function tokenAkses(): Promise<string> {
+  const hasil = await authGoogle().getAccessToken();
+  const token = typeof hasil === 'string' ? hasil : hasil?.token;
+  if (!token) throw new Error('Gagal memperoleh token akses Google.');
+  return token;
+}
+
+/**
+ * Ubah error Google menjadi pesan yang bisa ditindaklanjuti.
+ *
+ * Error asli Google panjang dan teknis ("insufficientPermissions",
+ * "The user does not have sufficient permissions for this file"). Pemilik
+ * produk perlu tahu APA yang harus dilakukan, bukan kode errornya.
+ */
+export function jelaskanErrorGoogle(err: unknown): string {
+  const e = err as { code?: number; message?: string; response?: { status?: number; data?: { error?: { message?: string } } } };
+  const pesan = String(e?.response?.data?.error?.message ?? e?.message ?? err ?? '');
+  const status = e?.response?.status ?? e?.code;
+
+  if (status === 401 || /invalid_grant|Invalid JWT|unauthorized_client/i.test(pesan)) {
+    return 'Kredensial Google ditolak. Periksa GOOGLE_CLIENT_EMAIL dan GOOGLE_PRIVATE_KEY (lihat docs/SETUP_GOOGLE.md).';
+  }
+  if (status === 403 && /permission|forbidden/i.test(pesan)) {
+    return 'Service account tidak punya izin. Pastikan folder Drive dan spreadsheet SUDAH dibagikan ke GOOGLE_CLIENT_EMAIL sebagai Editor.';
+  }
+  if (status === 404 || /notFound|File not found/i.test(pesan)) {
+    return 'Folder atau file tidak ditemukan. Periksa GOOGLE_DRIVE_FOLDER_ID dan GOOGLE_SHEET_ID.';
+  }
+  if (/API has not been used|is disabled/i.test(pesan)) {
+    return 'Google Drive/Sheets API belum diaktifkan di project Google Cloud Anda. Lihat docs/SETUP_GOOGLE.md langkah 3.';
+  }
+  if (/quota|rateLimit|userRateLimitExceeded/i.test(pesan)) {
+    return 'Kuota Google sedang penuh. Coba lagi beberapa saat lagi.';
+  }
+  return `Gagal menghubungi Google: ${pesan.slice(0, 200)}`;
+}

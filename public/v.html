@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Buka Video</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <main class="wadah">
+      <!-- ── Bagian kode ── -->
+      <section id="bagian-kode">
+        <header class="kepala">
+          <div class="kepala__ikon">💌</div>
+          <p class="kepala__nama" id="nama-perusahaan">Cokelat Kita</p>
+          <h1 class="kepala__judul">Ada video untukmu</h1>
+          <p class="kepala__keterangan">
+            Masukkan kode yang tertulis di kartu dalam kemasan.
+          </p>
+        </header>
+
+        <form id="form" class="kartu" novalidate>
+          <div class="bidang">
+            <label for="kode">Kode dari kartu</label>
+            <input
+              type="text"
+              id="kode"
+              class="kode-input"
+              placeholder="CH-XXXX-XXXX"
+              autocomplete="off"
+              autocapitalize="characters"
+              autocorrect="off"
+              spellcheck="false"
+              inputmode="text"
+              maxlength="16"
+              required
+            />
+            <p class="bantuan">Contoh: CH-7K9P-2M4Q — huruf besar/kecil tidak masalah.</p>
+          </div>
+
+          <div class="pesan pesan--gagal" id="pesan-gagal"></div>
+
+          <div class="bidang" style="margin-top: 20px">
+            <button type="submit" class="tombol" id="tombol-buka">Buka video</button>
+          </div>
+        </form>
+
+        <div class="catatan-aman">
+          <span class="catatan-aman__ikon">🔒</span>
+          <span>
+            Setiap kode hanya membuka satu video. Video orang lain tidak bisa
+            diakses dengan kode ini.
+          </span>
+        </div>
+      </section>
+
+      <!-- ── Bagian video ── -->
+      <section id="bagian-video" class="tersembunyi">
+        <header class="kepala" style="padding-bottom: 18px">
+          <div class="kepala__ikon">🎁</div>
+          <p class="kepala__nama" id="pengirim">Seseorang</p>
+          <h1 class="kepala__judul" id="judul-video">Untukmu</h1>
+        </header>
+
+        <div class="kartu kartu-pemutar">
+          <video id="pemutar" controls playsinline preload="metadata"></video>
+          <div class="kartu-pemutar__kepala">
+            <p class="kartu-pemutar__dari" id="keterangan-penerima"></p>
+          </div>
+          <div class="kartu-pemutar__pesan tersembunyi" id="kotak-pesan"></div>
+        </div>
+
+        <div class="pesan pesan--gagal" id="pesan-video"></div>
+
+        <div class="bidang" style="margin-top: 18px">
+          <button type="button" class="tombol tombol--garis" id="tombol-kode-lain">
+            Masukkan kode lain
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="kaki">
+      <a href="/">Tentang halaman ini</a>
+    </footer>
+
+    <script src="/js/v.js"></script>
+  </body>
+</html>

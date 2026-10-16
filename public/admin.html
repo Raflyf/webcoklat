@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Halaman admin TIDAK boleh diindeks mesin pencari -->
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Admin — Cetak QR</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+      /* ── Gaya khusus halaman admin ── */
+
+      .pin-kotak {
+        width: 100%;
+        padding: 16px 14px;
+        font-size: 26px;
+        font-weight: 700;
+        font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+        letter-spacing: 0.3em;
+        text-align: center;
+        color: var(--coklat-tua);
+        background: var(--krem);
+        border: 2px solid var(--garis);
+        border-radius: var(--radius-kecil);
+      }
+      .pin-kotak:focus {
+        outline: none;
+        border-color: var(--karamel);
+        background: #fff;
+      }
+
+      .qr-area {
+        display: flex;
+        justify-content: center;
+        padding: 24px;
+        background: #fff;
+        border: 1px solid var(--garis);
+        border-radius: var(--radius);
+      }
+      .qr-area img {
+        display: block;
+        width: 280px;
+        height: 280px;
+        image-rendering: pixelated;
+      }
+
+      .alamat {
+        text-align: center;
+        font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+        font-size: 13px;
+        color: var(--teks-lembut);
+        margin: 14px 0 0;
+        word-break: break-all;
+      }
+
+      .aksi {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 16px;
+      }
+      .aksi .tombol {
+        font-size: 15px;
+        padding: 13px 16px;
+      }
+
+      .daftar-pesanan {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      .daftar-pesanan th,
+      .daftar-pesanan td {
+        text-align: left;
+        padding: 9px 8px;
+        border-bottom: 1px solid var(--garis);
+        vertical-align: top;
+      }
+      .daftar-pesanan th {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--teks-lembut);
+        font-weight: 600;
+      }
+      .daftar-pesanan td.kode {
+        font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+        font-weight: 700;
+        color: var(--coklat-tua);
+        white-space: nowrap;
+      }
+      .daftar-pesanan td.waktu {
+        color: var(--teks-lembut);
+        white-space: nowrap;
+      }
+      .tabel-bungkus {
+        overflow-x: auto;
+        margin: 0 -4px;
+      }
+      .kosong {
+        text-align: center;
+        color: var(--teks-lembut);
+        font-size: 14px;
+        padding: 22px 10px;
+      }
+
+      .baris-kepala {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      .baris-kepala h1 {
+        font-size: 20px;
+        margin: 0;
+        color: var(--coklat-tua);
+      }
+      .tautan-keluar {
+        background: none;
+        border: none;
+        color: var(--teks-lembut);
+        font-size: 14px;
+        font-family: inherit;
+        cursor: pointer;
+        text-decoration: underline;
+        padding: 6px;
+      }
+      .tautan-keluar:hover {
+        color: var(--coklat);
+      }
+
+      /* Saat mencetak: hanya QR dan alamatnya yang tampil */
+      @media print {
+        body {
+          background: #fff;
+        }
+        .tanpa-cetak {
+          display: none !important;
+        }
+        .wadah {
+          padding: 0;
+          max-width: 100%;
+        }
+        .qr-area {
+          border: none;
+          padding: 0;
+        }
+        .qr-area img {
+          width: 380px;
+          height: 380px;
+        }
+        .alamat {
+          margin-top: 10px;
+          font-size: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wadah">
+      <!-- ── Layar PIN ── -->
+      <section id="layar-pin">
+        <header class="kepala">
+          <div class="kepala__ikon">🔐</div>
+          <h1 class="kepala__judul">Halaman Admin</h1>
+          <p class="kepala__keterangan">Masukkan PIN untuk membuka halaman cetak QR.</p>
+        </header>
+
+        <form id="form-pin" class="kartu" novalidate>
+          <div class="bidang">
+            <label for="pin">PIN admin</label>
+            <input
+              type="password"
+              id="pin"
+              class="pin-kotak"
+              inputmode="numeric"
+              autocomplete="current-password"
+              maxlength="32"
+              required
+            />
+          </div>
+
+          <div class="pesan pesan--gagal" id="pesan-pin"></div>
+
+          <div class="bidang" style="margin-top: 20px">
+            <button type="submit" class="tombol" id="tombol-masuk">Masuk</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ── Panel admin ── -->
+      <section id="panel" class="tersembunyi">
+        <div class="baris-kepala tanpa-cetak">
+          <h1>Cetak QR Kemasan</h1>
+          <button type="button" class="tautan-keluar" id="tombol-keluar">Keluar</button>
+        </div>
+
+        <div class="qr-area">
+          <img id="qr-gambar" alt="QR code untuk kemasan" />
+        </div>
+        <p class="alamat" id="alamat">memuat…</p>
+
+        <div class="aksi tanpa-cetak">
+          <button type="button" class="tombol" id="tombol-cetak">Cetak QR</button>
+          <button type="button" class="tombol tombol--garis" id="tombol-unduh">Unduh PNG</button>
+        </div>
+
+        <div class="kartu tanpa-cetak" style="margin-top: 18px">
+          <h2 class="kartu__judul">Penting sebelum mencetak</h2>
+          <ol class="langkah">
+            <li>
+              <strong>Satu QR untuk semua kemasan.</strong> Yang membedakan video tiap
+              penerima adalah kode pesanan di kartu, bukan QR-nya. Jadi cetak QR ini
+              sekali saja.
+            </li>
+            <li>
+              <strong>Pastikan alamat di atas sudah benar.</strong> Kalau masih
+              <em>localhost</em>, QR-nya tidak akan bisa dibuka dari ponsel siapa pun.
+              Perbaiki <code>SITUS_URL</code> lalu buka ulang halaman ini.
+            </li>
+            <li>
+              <strong>Cetak gelap di atas latar terang</strong>, ukuran minimal 2×2 cm
+              (disarankan 3×3 cm), dan jangan memotong ruang putih di sekelilingnya.
+            </li>
+            <li>
+              <strong>Uji pindai dengan 2-3 ponsel berbeda</strong> sebelum mencetak
+              dalam jumlah banyak.
+            </li>
+          </ol>
+        </div>
+
+        <div class="kartu tanpa-cetak" style="margin-top: 16px">
+          <h2 class="kartu__judul">Pesanan terbaru</h2>
+          <p class="kartu__keterangan" id="keterangan-pesanan">
+            Memuat daftar pesanan…
+          </p>
+          <div class="tabel-bungkus">
+            <table class="daftar-pesanan tersembunyi" id="tabel-pesanan">
+              <thead>
+                <tr>
+                  <th>Kode</th>
+                  <th>Penerima</th>
+                  <th>Pembeli</th>
+                  <th>Waktu</th>
+                </tr>
+              </thead>
+              <tbody id="isi-pesanan"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="kaki tanpa-cetak">
+      <a href="/">Kembali ke halaman depan</a>
+    </footer>
+
+    <script src="/js/admin.js"></script>
+  </body>
+</html>
