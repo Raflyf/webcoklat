@@ -7,8 +7,34 @@
     <meta name="robots" content="noindex, nofollow" />
     <title>Admin — Cetak QR</title>
     <link rel="stylesheet" href="/css/style.css" />
+    <script>
+      // Hilangkan kedipan layar PIN saat refresh bila token sesi sudah ada
+      try {
+        if (sessionStorage.getItem('cokelat_admin_sesi')) {
+          document.documentElement.classList.add('ada-sesi');
+        }
+      } catch (e) {}
+    </script>
     <style>
       /* ── Gaya khusus halaman admin ── */
+
+      /* Cegah kedipan layar PIN saat refresh */
+      html.ada-sesi #layar-pin {
+        display: none !important;
+      }
+      html.ada-sesi #layar-memuat {
+        display: flex !important;
+      }
+
+      #layar-memuat {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        margin: auto;
+        padding: 40px 20px;
+      }
 
       .pin-kotak {
         width: 100%;
@@ -134,29 +160,36 @@
         color: var(--coklat);
       }
 
-      /* Saat mencetak: hanya QR dan alamatnya yang tampil */
+      /* Saat mencetak: HANYA gambar QR yang tampil, tanpa alamat / tautan */
       @media print {
         body {
-          background: #fff;
+          background: #fff !important;
+          margin: 0 !important;
+          padding: 0 !important;
         }
-        .tanpa-cetak {
+        .tanpa-cetak,
+        .alamat {
           display: none !important;
         }
         .wadah {
-          padding: 0;
-          max-width: 100%;
+          padding: 0 !important;
+          margin: 0 !important;
+          max-width: 100% !important;
+        }
+        .panel-grid {
+          display: block !important;
         }
         .qr-area {
-          border: none;
-          padding: 0;
+          border: none !important;
+          box-shadow: none !important;
+          padding: 24px 0 !important;
+          display: flex !important;
+          justify-content: center !important;
         }
         .qr-area img {
-          width: 380px;
-          height: 380px;
-        }
-        .alamat {
-          margin-top: 10px;
-          font-size: 12px;
+          width: 380px !important;
+          height: 380px !important;
+          margin: 0 auto !important;
         }
       }
 
@@ -194,6 +227,15 @@
   </head>
   <body>
     <main class="wadah wadah--tengah">
+      <!-- Indikator memuat saat sesi dipulihkan (mencegah kedipan layar PIN) -->
+      <div id="layar-memuat" class="tersembunyi">
+        <div class="kepala">
+          <div class="kepala__ikon">🔐</div>
+          <h1 class="kepala__judul">Memuat Halaman Admin…</h1>
+          <p class="kepala__keterangan">Memeriksa sesi pengelola, mohon tunggu sebentar.</p>
+        </div>
+      </div>
+
       <!-- ── Layar PIN ── -->
       <section id="layar-pin">
         <header class="kepala">
@@ -238,11 +280,11 @@
             <div class="qr-area">
               <img id="qr-gambar" alt="QR code untuk kemasan" />
             </div>
-            <p class="alamat" id="alamat">memuat…</p>
+            <p class="alamat tanpa-cetak" id="alamat">memuat…</p>
 
             <div class="aksi tanpa-cetak">
               <button type="button" class="tombol" id="tombol-cetak">Cetak QR</button>
-              <button type="button" class="tombol tombol--garis" id="tombol-unduh">Unduh PNG</button>
+              <button type="button" class="tombol tombol--garis" id="tombol-unduh">Unduh Foto HD (PNG)</button>
             </div>
           </div>
 

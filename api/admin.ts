@@ -78,8 +78,9 @@ export default denganPenangananError('admin', async (req: VercelRequest, res: Ve
 
     const alamat = `${basisUrl.replace(/\/+$/, '')}/v`;
 
-    const [qrPng, qrSvg] = await Promise.all([
-      QRCode.toDataURL(alamat, { ...OPSI_QR, width: 900 }),
+    const [qrPng, qrPngHd, qrSvg] = await Promise.all([
+      QRCode.toDataURL(alamat, { ...OPSI_QR, width: 800 }),
+      QRCode.toDataURL(alamat, { ...OPSI_QR, width: 2400 }), // 2400x2400 px resolusi tinggi untuk cetak produksi kemasan
       QRCode.toString(alamat, { ...OPSI_QR, type: 'svg' }),
     ]);
 
@@ -108,6 +109,7 @@ export default denganPenangananError('admin', async (req: VercelRequest, res: Ve
       namaPerusahaan: config.namaPerusahaan,
       alamat,
       qrPng,
+      qrPngHd,
       qrSvg,
       pesanan,
       catatanPesanan,

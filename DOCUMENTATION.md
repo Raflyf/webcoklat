@@ -145,3 +145,15 @@ Panduan detail pembuatan akun layanan Google tersedia di [docs/SETUP_GOOGLE.md](
   - Menyediakan berkas penjamin `public/v/index.html` untuk membelokkan akses `/v` ke `/v.html` di lingkungan statis manapun.
   - Memperbarui `src/env.ts` dan `api/admin.ts` agar membaca domain otomatis Vercel (`VERCEL_PROJECT_PRODUCTION_URL`, `x-forwarded-host`) jika `SITUS_URL` belum diatur atau masih bernilai `localhost`.
 
+### 16 Oktober 2026 — Eliminasi Kedipan PIN Admin, Cetak Murni QR, & Ekspor Foto HD Kemasan
+- **Pencegahan Kedipan (Flicker) Layar PIN saat Refresh:**
+  - Menambahkan skrip sinkron di dalam `<head>` halaman `public/admin.html` yang langsung memeriksa `sessionStorage.getItem('cokelat_admin_sesi')` sebelum proses render pertama (*first paint*).
+  - Bila token sesi terdeteksi, kelas `html.ada-sesi` disematkan seketika sehingga `#layar-pin` otomatis disembunyikan (`display: none !important;`) dan indikator `#layar-memuat` ditampilkan hingga validasi token selesai.
+  - Skrip `public/js/admin.js` menghapus kelas `ada-sesi` dan menyembunyikan `#layar-memuat` saat data panel berhasil dirender atau saat sesi kedaluwarsa/keluar.
+- **Pembersihan Hasil Cetak (Print Cleanliness):**
+  - Mengisolasi `@media print` agar hanya menampilkan QR code besar terpusat. Tautan URL teks (`.alamat`) dan tombol aksi dinonaktifkan (`display: none !important;`) agar kemasan cetak bersih tanpa teks alamat tautan.
+- **Ekspor Foto QR Resolusi Tinggi (2400×2400 px PNG) untuk Produksi:**
+  - Mengubah fitur unduh QR dari format SVG menjadi format foto PNG definisi tinggi (*ultra-high resolution*) 2400×2400 px dengan level koreksi kesalahan H, siap cetak offset/sablon kemasan industri.
+  - Endpoint `api/admin.ts` kini menyuplai `qrPngHd` (2400 px) berdampingan dengan `qrPng` (800 px untuk pratinjau web), dengan fallback perenderan canvas 2400×2400 px di `public/js/admin.js`.
+
+

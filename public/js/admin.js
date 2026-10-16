@@ -16,6 +16,7 @@
 
   var KUNCI_SESI = 'cokelat_admin_sesi';
 
+  var elLayarMemuat = document.getElementById('layar-memuat');
   var elLayarPin = document.getElementById('layar-pin');
   var elPanel = document.getElementById('panel');
   var elFormPin = document.getElementById('form-pin');
@@ -32,6 +33,7 @@
   var elKeteranganPesanan = document.getElementById('keterangan-pesanan');
 
   var svgTerakhir = '';
+  var qrPngHdTerakhir = '';
 
   // ── Utilitas pesan ────────────────────────────────────────────────────────
   function tampilkanPesanPin(pesan) {
@@ -105,6 +107,8 @@
           } catch (err) {
             /* abaikan */
           }
+          document.documentElement.classList.remove('ada-sesi');
+          if (elLayarMemuat) elLayarMemuat.classList.add('tersembunyi');
           elPanel.classList.add('tersembunyi');
           elLayarPin.classList.remove('tersembunyi');
           tampilkanPesanPin((d && d.pesan) || 'Sesi berakhir. Masukkan PIN lagi.');
@@ -113,17 +117,24 @@
         tampilkanPanel(d);
       })
       .catch(function () {
-        elKeteranganPesanan.textContent = 'Gagal memuat data. Muat ulang halaman ini.';
+        document.documentElement.classList.remove('ada-sesi');
+        if (elLayarMemuat) elLayarMemuat.classList.add('tersembunyi');
+        elPanel.classList.add('tersembunyi');
+        elLayarPin.classList.remove('tersembunyi');
+        tampilkanPesanPin('Gagal memuat data sesi. Masukkan PIN lagi.');
       });
   }
 
   function tampilkanPanel(d) {
+    document.documentElement.classList.remove('ada-sesi');
+    if (elLayarMemuat) elLayarMemuat.classList.add('tersembunyi');
     elLayarPin.classList.add('tersembunyi');
     elPanel.classList.remove('tersembunyi');
 
     elQrGambar.src = d.qrPng || '';
     elAlamat.textContent = d.alamat || '';
     svgTerakhir = d.qrSvg || '';
+    qrPngHdTerakhir = d.qrPngHd || '';
 
     document.title = 'Admin — ' + (d.namaPerusahaan || 'Cetak QR');
 
@@ -217,30 +228,58 @@
   });
 
   elTombolUnduh.addEventListener('click', function () {
-    // Utamakan SVG: vektor, jadi tetap tajam di ukuran cetak berapa pun.
-    if (svgTerakhir) {
-      var blob = new Blob([svgTerakhir], { type: 'image/svg+xml' });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      a.href = url;
-      a.download = 'qr-kemasan.svg';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(function () {
-        URL.revokeObjectURL(url);
-      }, 1000);
+    // Unduh foto PNG resolusi tinggi (2400x2400 px) untuk cetak kemasan produksi
+    if (qrPngHdTerakhir) {
+      var tautan = document.createElement('a');
+      tautan.href = qrPngHdTerakhir;
+      tautan.download = 'qr-kemasan-hd.png';
+      document.body.appendChild(tautan);
+      tautan.click();
+      document.body.removeChild(tautan);
       return;
     }
-    // Cadangan: PNG dari server.
+
+    // Fallback: bila server belum kirim qrPngHd, render SVG ke canvas resolusi tinggi (2400x2400 px)
+    if (svgTerakhir) {
+      var img = new Image();
+      var svgBlob = new Blob([svgTerakhir], { type: 'image/svg+xml;charset=utf-8' });
+      var url = URL.createObjectURL(svgBlob);
+      img.onload = function () {
+        try {
+          var canvas = document.createElement('canvas');
+          canvas.width = 2400;
+          canvas.height = 2400;
+          var ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.imageSmoothingEnabled = false;
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, 2400, 2400);
+            ctx.drawImage(img, 0, 0, 2400, 2400);
+            var pngUrl = canvas.toDataURL('image/png');
+            var a = document.createElement('a');
+            a.href = pngUrl;
+            a.download = 'qr-kemasan-hd.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }
+        } finally {
+          URL.revokeObjectURL(url);
+        }
+      };
+      img.src = url;
+      return;
+    }
+
+    // Cadangan terakhir: PNG dari elemen gambar
     var sumber = elQrGambar.src;
     if (!sumber) return;
-    var tautan = document.createElement('a');
-    tautan.href = sumber;
-    tautan.download = 'qr-kemasan.png';
-    document.body.appendChild(tautan);
-    tautan.click();
-    document.body.removeChild(tautan);
+    var link = document.createElement('a');
+    link.href = sumber;
+    link.download = 'qr-kemasan-hd.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   });
 
   elTombolKeluar.addEventListener('click', function () {
@@ -249,6 +288,8 @@
     } catch (err) {
       /* abaikan */
     }
+    document.documentElement.classList.remove('ada-sesi');
+    if (elLayarMemuat) elLayarMemuat.classList.add('tersembunyi');
     elPanel.classList.add('tersembunyi');
     elLayarPin.classList.remove('tersembunyi');
     elPin.value = '';
